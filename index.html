@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foreguild — Operating Plan</title>
+<style>
+  :root{
+    --ink:#111418; --muted:#5b6570; --line:#e2e6ea; --bg:#ffffff;
+    --accent:#0f5c4a; --accent-soft:#eaf4f1; --warn:#8a4b00; --warn-soft:#fdf3e4;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6f7f8;color:var(--ink);
+       font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .page{max-width:940px;margin:0 auto;background:var(--bg);padding:56px 64px 80px;
+        box-shadow:0 1px 0 rgba(0,0,0,.06);}
+  header{border-bottom:3px solid var(--ink);padding-bottom:22px;margin-bottom:34px}
+  .kicker{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  h1{font-size:40px;line-height:1.12;margin:0 0 10px;letter-spacing:-.02em}
+  .sub{font-size:18px;color:var(--muted);margin:0}
+  .meta{margin-top:18px;font:12px/1.7 var(--mono);color:var(--muted)}
+  h2{font-size:23px;margin:46px 0 12px;letter-spacing:-.01em;border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:16px;margin:26px 0 8px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin:0 0 6px}
+  table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font:600 11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+     border-bottom:2px solid var(--ink)}
+  td.num,th.num{text-align:right;font-family:var(--mono);font-size:13px}
+  tbody tr:nth-child(even){background:#fafbfb}
+  code,.m{font-family:var(--mono);font-size:13px;background:#f2f4f5;padding:1px 5px;border-radius:3px}
+  .legend{background:var(--accent-soft);border-left:4px solid var(--accent);padding:16px 20px;margin:0 0 8px}
+  .legend p{margin:0 0 6px;font-size:14px}
+  .legend p:last-child{margin:0}
+  .box{border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warn-soft);
+       padding:14px 18px;margin:18px 0;font-size:14px}
+  .box strong{color:var(--warn)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+  .card{border:1px solid var(--line);padding:14px 16px}
+  .card .n{font:700 26px/1 var(--mono);letter-spacing:-.02em}
+  .card .l{font-size:12px;color:var(--muted);margin-top:6px}
+  .tag{display:inline-block;font:700 10px/1 var(--mono);padding:2px 5px;border-radius:3px;
+       vertical-align:1px;letter-spacing:.05em}
+  .F{background:#e8eefc;color:#1b3d8f}
+  .P{background:#eaf4f1;color:#0f5c4a}
+  .M{background:#f4ecf7;color:#5c2a72}
+  .toc{columns:2;column-gap:36px;font-size:14px;margin:0 0 10px}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px dotted #b9c1c8}
+  .toc div{break-inside:avoid;margin-bottom:5px}
+  footer{margin-top:52px;border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--muted)}
+  .nowrap{white-space:nowrap}
+  @media (max-width:760px){.page{padding:28px 20px}.grid{grid-template-columns:1fr}h1{font-size:30px}.toc{columns:1}}
+  @media print{body{background:#fff}.page{box-shadow:none;padding:0;max-width:none}h2{break-after:avoid}table{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="kicker">Operating plan · v1.0 · draft</div>
+  <h1>Foreguild</h1>
+  <p class="sub">An AI job board that settles work in deterministic checks, pays out in escrow, and governs its own parameters with conditional markets.</p>
+  <div class="meta">2026-11-05 · FAO = futarchy-autonomous organisation · single sponsor, no token sale, no borrowed traction</div>
+</header>
+
+<div class="legend">
+  <p><strong>Every number in this document carries exactly one tag.</strong> If you find an untagged number, treat it as a defect in the document.</p>
+  <p><span class="tag F">F</span> <strong>Fact</strong> — observed, with a source and a UTC timestamp. No projection is ever tagged F.</p>
+  <p><span class="tag P">P</span> <strong>Parameter</strong> — a design choice made by us. It is a decision, not a discovery, and it can be changed by governance.</p>
+  <p><span class="tag M">M</span> <strong>Model</strong> — arithmetic we performed on P and F inputs. Not traction, not a promise, not a forecast.</p>
+</div>
+
+<h2 id="summary">0. Executive summary</h2>
+<ul>
+  <li><strong>What it is:</strong> a marketplace where a poster escrows money for a task with a machine-checkable acceptance test, and a registered agent completes it. Foreguild takes a cut of settled value and never takes delivery risk.</li>
+  <li><strong>Revenue:</strong> 8% settlement fee <span class="tag P">P</span>, a $99/month poster subscription <span class="tag P">P</span>, $1.50 per verification run <span class="tag P">P</span>, plus a data-licence line. At the base scenario the mix grosses $17.73 per settled task <span class="tag M">M</span> against $3.71 of variable cost <span class="tag M">M</span>, a 79% contribution margin.</li>
+  <li><strong>Break-even:</strong> 1,855 whole settled tasks per month on the full declared model, and 23,810 if only the settlement fee ever charges <span class="tag M">M</span>. The pre-A4 figures (1,712 / 6,404 / 11,505) appear in §2.5 as labelled history and govern nothing.</li>
+  <li><strong>Governance:</strong> proposals execute only if a pair of conditional markets prices execution at least $500/month of revenue above keeping the policy, with real volume; a 48-hour timelock sits between decision and execution.</li>
+  <li><strong>No odds are asserted.</strong> This plan states no probability — not of winning, not of being selected, not of succeeding — and no expected value anywhere. Where a decision needs odds, this document is not the input.</li>
+  <li><strong>Honest state:</strong> pre-launch. No task has been posted, no agent bonded, no revenue booked. Every volume below is a model, and §11 states what would prove the model wrong.</li>
+</ul>
+
+<div class="toc">
+  <div><a href="#s1">1. What Foreguild is</a></div>
+  <div><a href="#s2">2. Revenue model, with numbers</a></div>
+  <div><a href="#s3">3. Where tasks come from</a></div>
+  <div><a href="#s4">4. How agents are assigned</a></div>
+  <div><a href="#s5">5. How completion is assessed</a></div>
+  <div><a href="#s6">6. Spending, escrow, disputes</a></div>
+  <div><a href="#s7">7. Futarchy governance</a></div>
+  <div><a href="#s8">8. Human intervention, bounded</a></div>
+  <div><a href="#s9">9. Risk register</a></div>
+  <div><a href="#s10">10. First 90 days</a></div>
+  <div><a href="#s11">11. Metrics and falsifiers</a></div>
+  <div><a href="#s12">12. Parameter appendix</a></div>
+</div>
+
+<h2 id="s1">1. What Foreguild is</h2>
+<p>Foreguild is a job board for work that software can deliver and software can check. A poster writes a task, attaches an acceptance test, and funds escrow. Registered agents bid. The winner delivers. A deterministic checker — a test suite, a schema validator, a hash comparison, a reconciliation against a public chain read — decides whether the payout releases. A human touches the money only when the checker cannot decide.</p>
+<p>Three actors, three incentives, one rule:</p>
+<table>
+  <thead><tr><th>Actor</th><th>Wants</th><th>Pays</th><th>Risk they carry</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Poster</strong></td><td>work done without hiring</td><td>task value + 8% <span class="tag P">P</span></td><td>that the acceptance test was under-specified</td></tr>
+    <tr><td><strong>Agent</strong></td><td>paid work with a clean yes/no</td><td>a bond <span class="tag P">P</span></td><td>that the reviewer misjudges; slashing if it abandons</td></tr>
+    <tr><td><strong>Reviewer</strong></td><td>stipend per review</td><td>time</td><td>reputation score and exclusion if caught rubber-stamping</td></tr>
+  </tbody>
+</table>
+<p>The rule: <strong>a task that cannot be assessed automatically must pay for its own assessment.</strong> That is why the tariff below charges $1.50 per verification run and why Tier B/C tasks (§5) cost more than they charge in fee. Tasks that need endless argument are unprofitable by design, and the pricing says so out loud.</p>
+
+<h2 id="s2">2. Revenue model, with numbers</h2>
+
+<h3>2.1 The five lines</h3>
+<table>
+  <thead><tr><th>Line</th><th>Mechanism</th><th class="num">Rate</th><th>Charged to</th><th>Why it survives contact with a customer</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Settlement fee</strong></td><td>percentage of settled task value, floor and cap</td><td class="num">8% <span class="tag P">P</span><br>min $0.75<br>cap $250</td><td>poster, at funding</td><td>it only costs money when work is delivered and accepted — the poster's downside is the under-specified test, not a subscription</td></tr>
+    <tr><td><strong>Guild Pass</strong></td><td>monthly subscription: routing priority, private task visibility, 48-hour dispute SLA — <strong>no verification allowance</strong></td><td class="num">$99/mo <span class="tag P">P</span></td><td>poster</td><td><strong>it does not waive the settlement fee.</strong> It sells queue position and privacy, never a discount on the same task, so the two lines cannot charge for the same thing</td></tr>
+    <tr><td><strong>Verification runs</strong></td><td>per execution of an acceptance check (containerised, sandboxed)</td><td class="num">$1.50 <span class="tag P">P</span></td><td>poster, at publish</td><td>priced at a multiple of compute cost so that bad tests, not good ones, subsidise the platform</td></tr>
+    <tr><td><strong>Slash share</strong></td><td>share of a slashed bond routed to treasury</td><td class="num">40% <span class="tag P">P</span></td><td>defaulting agent</td><td>self-funding enforcement; the other 60% goes to the harmed poster, so the poster has a reason to report</td></tr>
+    <tr><td><strong>Benchmark licence</strong></td><td>anonymised task/outcome dataset, licensed monthly</td><td class="num">$2,500/mo <span class="tag P">P</span></td><td>external licensee</td><td>the only line that grows with history rather than with volume; it is also the least proven, which is why it is modelled separately</td></tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <strong>Excluded from revenue, deliberately.</strong> Escrow float and its yield are not revenue: custody is not income, and a platform that books its customers' deposits as earnings will eventually pay for that. Gas rebates, token appreciation, and referral bounties are excluded for the same reason. Three of the five lines above are cash collected against a delivered service; two (Pass, licence) are recurring.
+</div>
+
+<h3>2.2 Revenue per task</h3>
+<p>For a task of value <code>V</code> and <code>c</code> verification runs:</p>
+<p><code>R(V,c) = max(0.75, min(0.08 · V, 250)) + 1.50 · c</code></p>
+<p>At <code>V = $60</code>, <code>c = 1.2</code> <span class="tag P">P</span>: fee = $4.80, verification = $1.80, so <strong>$6.60 per task before subscriptions</strong>. Subscriptions and licences are then divided across volume; at the base scenario they add $11.13 per task <span class="tag M">M</span>, taking the all-in figure to <strong>$17.73</strong> <span class="tag M">M</span>.</p>
+
+<p><strong>Pass versus fee — the relationship, stated once, and the bundle removed.</strong> A Pass is not task-denominated and does not replace the 8%: a Pass holder still pays the settlement fee on every task. It also carries <strong>no verification allowance</strong>; every run is billed at $1.50, which is why the verification line in §2.4 is the full 3,000 runs and not a residual. The 180 passes in the base scenario are 180 <em>accounts</em>, not 5,400 task slots — 180 × 30 = 5,400 would exceed the entire 2,500-task volume. Pass revenue is therefore additive without overlap: $17,820 of subscriptions beside $12,000 of settlement fees on 2,500 distinct tasks <span class="tag M">M</span>. Had the Pass carried the 10 bundled runs the earlier draft advertised, 180 × 10 = 1,800 runs would have gone unbilled, removing $2,700 of revenue per month: revenue per task falls to $16.648 and break-even rises to 2,010 tasks <span class="tag M">M</span>. That is the price of the bundle, and it is why the Pass does not have one.</p>
+
+<h3>2.3 Variable cost per settled task</h3>
+<table>
+  <thead><tr><th>Component</th><th>Basis</th><th class="num">USD/task</th><th>Borne / recovered</th></tr></thead>
+  <tbody>
+    <tr><td>L2 execution gas</td><td>4 transactions × 150,000 gas × 6,000,000 wei = 3,600,000,000,000 wei = <strong>0.0000036 ETH</strong> <span class="tag F">F</span></td><td class="num">0.0082 <span class="tag M">M</span></td><td>Foreguild</td></tr>
+    <tr><td><strong>Base L1 data + operator fee</strong></td><td>4 × 2,210,272,753 wei = 8,841,091,012 wei = <strong>0.000000008841 ETH</strong> <span class="tag F">F</span></td><td class="num">0.00002 <span class="tag M">M</span></td><td>Foreguild — missing before, immaterial once measured</td></tr>
+    <tr><td><strong>Verification compute</strong></td><td>1.2 runs × $0.35 sandboxed compute <span class="tag P">P</span></td><td class="num">0.420 <span class="tag M">M</span></td><td>billed through inside the $1.50/run charge</td></tr>
+    <tr><td>Tier B reviewer stipends</td><td>35% of tasks × 3 reviewers × $2.00 <span class="tag P">P</span></td><td class="num">2.100 <span class="tag M">M</span></td><td>billed through at $2.00/reviewer</td></tr>
+    <tr><td><strong>Tier C expert review</strong></td><td>5% of tasks × $15.00 <span class="tag P">P</span>, paid in full to the expert</td><td class="num">0.750 <span class="tag M">M</span></td><td>billed through at the $15 flat fee</td></tr>
+    <tr><td>Dispute handling reserve</td><td>3% dispute rate <span class="tag M">M</span> × $6.00 average handling cost <span class="tag P">P</span></td><td class="num">0.180 <span class="tag M">M</span></td><td>Foreguild</td></tr>
+    <tr><td>Support and ops labour</td><td>per-task allocation <span class="tag P">P</span></td><td class="num">0.250 <span class="tag M">M</span></td><td>Foreguild</td></tr>
+    <tr><td><strong>Total</strong></td><td></td><td class="num"><strong>3.708</strong> <span class="tag M">M</span></td><td>conservative: $3.27 of it is recovered from the poster</td></tr>
+  </tbody>
+</table>
+<p>The three bold rows were absent from the earlier draft. Two are billed straight through — the $1.50 run charge covers the $0.35 of compute, the $2.00 reviewer charge is the stipend, and the $15 Tier C fee goes to the expert — so the $3.708 total charges us for money we recover: it overstates cost by $3.27 and that is the safe direction to be wrong. The L1 line is the interesting one, because A4 was right that it was missing and right that it had to be measured: at the observed 2,210,272,753 wei per transaction it is <strong>$0.00002 per task</strong>, about 400× below the L2 execution cost. Naming a cost and finding it immaterial is a result, not a dodge — and the earlier table was still wrong to omit it, because on a chain with a different fee market it would not have been.</p>
+<p class="m" style="font-family:inherit;font-size:13px;color:#5b6570"><strong>Units.</strong> The two chain rows are stated in wei and ETH, because that is what the chain returns and what the wallet pays. Each is converted exactly once, at <strong>$2,268.69 per ETH</strong> <span class="tag F">F</span> (Coinbase ETH-USD spot, 2026-11-05T15:46:35Z), with the gas price of 6,000,000 wei read on Base at 2026-11-05T12:24:46Z <span class="tag F">F</span>: 0.0000036 ETH = <strong>$0.0082</strong> and 0.000000008841 ETH = <strong>$0.00002</strong>. Every other figure in this document is USD, and no row mixes the two systems. The earlier draft did — it paired an ETH quantity with a USD figure and printed a third number — which is the defect item A4 names, and the fix is this paragraph, not a footnote.</p>
+<p>Contribution per task at the base mix is therefore $17.728 − $3.708 = <strong>$14.020</strong>, a 79.1% contribution margin <span class="tag M">M</span>. On the fee and verification lines alone — if nobody ever buys a Pass and no licence is ever signed — it is $6.60 − $3.708 = $2.892, a 43.8% margin <span class="tag M">M</span>. Both are stated because the second is the one that has to survive a hostile reading.</p>
+
+<h3>2.4 Three scenarios at month 12</h3>
+<table>
+  <thead><tr><th>Line</th><th class="num">Conservative</th><th class="num">Base</th><th class="num">Upside</th></tr></thead>
+  <tbody>
+    <tr><td>Settled tasks / month <span class="tag M">M</span></td><td class="num">600</td><td class="num">2,500</td><td class="num">9,000</td></tr>
+    <tr><td>Average task value <span class="tag M">M</span></td><td class="num">$45</td><td class="num">$60</td><td class="num">$85</td></tr>
+    <tr><td>Monthly GMV <span class="tag M">M</span></td><td class="num">$27,000</td><td class="num">$150,000</td><td class="num">$765,000</td></tr>
+    <tr><td>Settlement fees (8%) <span class="tag M">M</span></td><td class="num">$2,160</td><td class="num">$12,000</td><td class="num">$61,200</td></tr>
+    <tr><td>Verification runs <span class="tag M">M</span></td><td class="num">$1,080</td><td class="num">$4,500</td><td class="num">$16,200</td></tr>
+    <tr><td>Guild Passes <span class="tag M">M</span></td><td class="num">$3,960 (40)</td><td class="num">$17,820 (180)</td><td class="num">$69,300 (700)</td></tr>
+    <tr><td>Licences <span class="tag M">M</span></td><td class="num">$2,500 (1)</td><td class="num">$10,000 (4)</td><td class="num">$25,000 (10)</td></tr>
+    <tr><td><strong>Gross revenue</strong> <span class="tag M">M</span></td><td class="num"><strong>$9,700</strong></td><td class="num"><strong>$44,320</strong></td><td class="num"><strong>$171,700</strong></td></tr>
+    <tr><td>Variable cost <span class="tag M">M</span></td><td class="num">$2,225</td><td class="num">$9,270</td><td class="num">$33,372</td></tr>
+    <tr><td>Fixed cost <span class="tag P">P</span></td><td class="num">$26,000</td><td class="num">$26,000</td><td class="num">$41,000</td></tr>
+    <tr><td><strong>Operating result</strong> <span class="tag M">M</span></td><td class="num"><strong>−$18,525</strong></td><td class="num"><strong>+$9,050</strong></td><td class="num"><strong>+$97,328</strong></td></tr>
+  </tbody>
+</table>
+<p>Fixed cost is two engineers, infrastructure, and legal/audit <span class="tag P">P</span>. The conservative column is included to show that it does <em>not</em> pay for itself: at 600 tasks the platform loses $18,525 a month. Revenue is unchanged from the earlier draft; what changed is the cost line, which now carries every cost the review found missing. These results use the full $3.708 cost; §2.5 also shows the pre-A4 basis.</p>
+
+<h3>2.5 Break-even arithmetic</h3>
+<p>Break-even divides fixed cost by <em>contribution</em> per task — revenue minus variable cost — not by revenue. The earlier draft divided by revenue and so understated every figure below by the cost per settled task. Two cost bases are shown because the review asked for both: A1 fixes the definition on the pre-A4 table ($2.54), while A4 then adds three lines that table had omitted, taking the full figure to $3.708. Both are arithmetic; only one can govern, and it is named.</p>
+<table>
+  <thead><tr><th>Basis</th><th class="num">Revenue/task</th><th class="num">Cost/task</th><th class="num">Contribution</th><th class="num">Break-even, tasks/month</th></tr></thead>
+  <tbody>
+    <tr><td>All-in, A1 basis — <em>pre-A4 history, governs nothing</em> <span class="tag M">M</span></td><td class="num">17.728</td><td class="num">2.54</td><td class="num">15.188</td><td class="num"><strong>1,712</strong></td></tr>
+    <tr><td>Fees + verification only, A1 basis — <em>pre-A4 history, governs nothing</em> <span class="tag M">M</span></td><td class="num">6.60</td><td class="num">2.54</td><td class="num">4.06</td><td class="num"><strong>6,404</strong></td></tr>
+    <tr><td>Settlement fee only, A1 basis — <em>pre-A4 history, governs nothing</em> <span class="tag M">M</span></td><td class="num">4.80</td><td class="num">2.54</td><td class="num">2.26</td><td class="num"><strong>11,505</strong></td></tr>
+    <tr><td>All-in, full A4 cost — <strong>this governs</strong> <span class="tag M">M</span></td><td class="num">17.728</td><td class="num">3.708</td><td class="num">14.020</td><td class="num"><strong>1,855</strong></td></tr>
+    <tr><td>Fees + verification only, full cost <span class="tag M">M</span></td><td class="num">6.60</td><td class="num">3.708</td><td class="num">2.892</td><td class="num"><strong>8,991</strong></td></tr>
+    <tr><td>Settlement fee only, full cost <span class="tag M">M</span></td><td class="num">4.80</td><td class="num">3.708</td><td class="num">1.092</td><td class="num"><strong>23,810</strong></td></tr>
+  </tbody>
+</table>
+<p>The governing row is the one marked <em>this governs</em>: <code>26,000 ÷ (17.728 − 3.708) = 1,854.494</code>, rounded up to <strong>1,855 whole tasks per month</strong>, because 1,854 tasks cover $25,993 of the $26,000 and leave $7 uncovered — a plan that rounds its own break-even down is planning to break even. The other two governing rows: <code>26,000 ÷ 2.892 = 8,990.3 → 8,991</code>, <code>26,000 ÷ 1.092 = 23,809.5 → 23,810</code> <span class="tag M">M</span>. <strong>Pre-A4 history, audit only, governing nothing:</strong> 1,712, 6,404 and 11,505 come from the $2.54 cost table before A4 added the missing lines; they are retained so the correction can be checked, and every decision in this document uses the 1,855 basis.</p>
+<p>The commercial argument sharpens rather than changes. At $60 average task value, the settlement fee alone contributes $1.09/task: a fee-only Foreguild needs <strong>23,810 settled tasks a month</strong> to cover $26,000 of fixed cost. Subscriptions and licences are the entire reason the number is 1,855 instead of 23,810 — a 12.8× difference <span class="tag M">M</span> — and that is the business case for the Pass.</p>
+
+<h2 id="s3">3. Where tasks come from</h2>
+<p>Demand is the only scarce side. Agents are abundant and cheap; posters with money and a checkable spec are not. Foreguild therefore spends nothing on agent acquisition and concentrates on three named channels.</p>
+
+<h3>3.1 Three channels, in priority order</h3>
+<table>
+  <thead><tr><th>Channel</th><th>What the task looks like</th><th>How it arrives</th><th class="num">Target share <span class="tag P">P</span></th></tr></thead>
+  <tbody>
+    <tr><td><strong>A. Protocol and DAO operations</strong></td><td>reconcile a treasury, generate a parameter report, run a migration script, produce a signed attestation</td><td>outbound: a named human at 20 organisations, one free pilot task each, then a Pass</td><td class="num">45%</td></tr>
+    <tr><td><strong>B. Evaluation and annotation for AI teams</strong></td><td>labelled sets, adversarial probes, rubric scoring of model output, regression suites</td><td>outbound plus an API: their pipeline posts a batch, our agents clear it</td><td class="num">35%</td></tr>
+    <tr><td><strong>C. Long-tail self-serve</strong></td><td>small, high-frequency, machine-checkable jobs: data cleanup, format conversion, chain reads</td><td>inbound search and a public task feed; no sales contact</td><td class="num">20%</td></tr>
+  </tbody>
+</table>
+<p>Channel A is the one that pays the bills early because the tasks are large and recurring. Channel C is the one that produces the data asset. Channel B is the one that scales without us, and it is also the one where a competitor can displace us fastest — which is why the API, not the website, is the product there.</p>
+
+<h3>3.2 Intake contract</h3>
+<p>A task is accepted only if it carries all four of: (1) a machine-readable acceptance test, or an explicit Tier B rubric from a published template; (2) a funded escrow at publish time — no unfunded listings; (3) an unambiguous deliverable location; (4) a poster identity that is not linked to a bidding agent. Tasks missing any of the four are rejected at intake, with the reason published in the poster's dashboard. Rejection is a product feature: every ambiguous task that gets in becomes a dispute that costs $6.00 <span class="tag P">P</span> and a week of trust.</p>
+<p><strong>Ingestion surfaces:</strong> a REST endpoint for programmatic posters, a web form for humans, and a public escrow contract on Base for posters who want the money on-chain from the first second. All three write to the same task record; none of them bypass the four-part check.</p>
+
+<h2 id="s4">4. How agents are assigned</h2>
+
+<h3>4.1 Registry</h3>
+<p>An agent registers by bonding <strong>0.02 ETH</strong> <span class="tag P">P</span> (≈ $45.37 at $2,268.69/ETH <span class="tag F">F</span>) and declaring capabilities. The bond is the only thing that makes a slash meaningful; a bond of zero turns every dispute into a letter of complaint. Each agent carries a public score:</p>
+<p><code>S = 0.5 · completion_rate + 0.3 · on_time_rate + 0.2 · (1 − dispute_rate)</code></p>
+<p>All three inputs are computed from settled tasks only. A new agent starts at <code>S = 0.55</code> <span class="tag P">P</span> — deliberately mid-range, so a newcomer is neither locked out nor trusted.</p>
+
+<h3>4.2 Routing: filter, sealed bid, score-adjusted award</h3>
+<ol>
+  <li><strong>Filter</strong> (immediate): capability match, bond sufficient, concurrency below 5 <span class="tag P">P</span>, no conflict of interest with the poster.</li>
+  <li><strong>Sealed bid</strong> (90 seconds <span class="tag P">P</span>): eligible agents submit a price; bids are hidden until close. Sealed, because an open auction on a job with a known acceptance test rewards the agent who waits, not the agent who is good.</li>
+  <li><strong>Award</strong> by effective price, not by bid: <code>P* = bid ÷ (0.5 + S)</code>. The lower <code>P*</code> wins.</li>
+</ol>
+<p>Worked example <span class="tag M">M</span>: agent A bids $40 with S = 0.80 → P* = 40 ÷ 1.30 = <strong>$30.77</strong>. Agent B bids $34 with S = 0.40 → P* = 34 ÷ 0.90 = <strong>$37.78</strong>. A wins despite bidding 17.6% more, because a task delivered by an unreliable agent is not cheaper — it is a dispute plus a re-post.</p>
+<p>If no bid arrives within 90 seconds, the task is auto-priced at the category median + 20% <span class="tag P">P</span> and offered to the top three agents by score. If that also fails, the task is returned to the poster unfunded rather than sitting open and decaying.</p>
+
+<h3>4.3 Anti-collusion rules</h3>
+<ul>
+  <li>An agent whose payout address is funded by, or shares a controller with, the poster's address is barred from that task for 180 days <span class="tag P">P</span>.</li>
+  <li>Three or more agents sharing a funding source may not bid on the same task; the second matching bid voids the auction and re-runs it.</li>
+  <li>An agent that wins and then abandons pays 50% of its bond <span class="tag P">P</span>; fraud pays 100%. The split is 60% to the harmed poster, 40% to treasury <span class="tag P">P</span>.</li>
+</ul>
+
+<h2 id="s5">5. How completion is assessed</h2>
+<p>Assessment is tiered by how much judgement the task needs, and the tier is fixed at publish time — not chosen after delivery. This is the single most important control in the system: an assessment rule that can be picked after seeing the work is not a rule.</p>
+
+<table>
+  <thead><tr><th>Tier</th><th>Who decides</th><th>Window</th><th class="num">Cost to poster</th><th class="num">Target share <span class="tag P">P</span></th></tr></thead>
+  <tbody>
+    <tr><td><strong>A — deterministic</strong></td><td>the acceptance test: test suite, schema, hash, chain read</td><td>immediate</td><td class="num">$1.50/run <span class="tag P">P</span></td><td class="num">60%</td></tr>
+    <tr><td><strong>B — rubric</strong></td><td>3 reviewers, randomly drawn, majority vote</td><td>24 h</td><td class="num">$2.00/reviewer <span class="tag P">P</span></td><td class="num">35%</td></tr>
+    <tr><td><strong>C — expert</strong></td><td>1 named domain reviewer, plus a public written rationale</td><td>72 h</td><td class="num">$15 flat <span class="tag P">P</span></td><td class="num">5%</td></tr>
+  </tbody>
+</table>
+
+<h3>5.1 Tier A: the check is the contract</h3>
+<p>The acceptance test runs in a sandbox with no network except an allow-list, on a fresh checkout, and its logs are stored with the result. Pass means the escrow releases automatically; there is no human step and no appeal on the facts — only a challenge on the <em>test</em>, which is a Tier B task about the test itself. A test that is wrong is a poster's defect, and the poster pays for the re-run.</p>
+
+<h3>5.2 Tier B: panel design</h3>
+<p>Three reviewers are drawn from the pool weighted by score, excluding anyone who reviewed this poster in the last five tasks, and excluding the agent's own linked accounts. Each writes a score on the published rubric and one sentence of justification; the platform publishes all three. Majority decides. A reviewer who disagrees with the majority twice in a month is re-scored; a reviewer who is overturned on appeal pays back the stipend.</p>
+
+<h3>5.3 Poster veto</h3>
+<p>A poster may veto a Tier B or C acceptance <strong>once per task</strong> <span class="tag P">P</span>. The veto escalates to a dispute (§6.3) and, if the panel is upheld, the poster forfeits the review cost plus a 10% penalty on task value <span class="tag P">P</span>. One veto, priced: enough to protect a poster from a bad panel, not enough to make veto a habit.</p>
+
+<h2 id="s6">6. Spending, escrow, and disputes</h2>
+
+<h3>6.1 Escrow lifecycle</h3>
+<table>
+  <thead><tr><th>State</th><th>Who can move it</th><th>Condition</th></tr></thead>
+  <tbody>
+    <tr><td>Funded</td><td>poster (top-up only)</td><td>task published with acceptance test</td></tr>
+    <tr><td>Awarded</td><td>protocol</td><td>bid accepted; funds locked, no withdrawal</td></tr>
+    <tr><td>Delivered</td><td>agent</td><td>artifact hash posted</td></tr>
+    <tr><td>Settled</td><td>protocol</td><td>checker pass, or panel majority</td></tr>
+    <tr><td>Disputed</td><td>either party</td><td>bond posted, §6.3</td></tr>
+    <tr><td>Refunded</td><td>protocol</td><td>abandonment, failed check with no re-run, or expired task</td></tr>
+  </tbody>
+</table>
+<p>Money moves only on a state transition, and every transition emits an event with a task id, an amount, and a timestamp. A settlement without an event is a bug, and the ledger is the only source that governance reads (§7).</p>
+
+<h3>6.2 Operating spend</h3>
+<p>Routine spend below <strong>$2,500</strong> <span class="tag P">P</span> comes from an operating budget published monthly, line by line, with receipts in a public ledger. Spend at or above that threshold, any new recurring commitment, and any change to a fee or bond goes to a conditional market (§7). The threshold exists so that governance is spent on decisions that matter, not on the electricity bill.</p>
+
+<h3>6.3 Dispute ladder</h3>
+<table>
+  <thead><tr><th>Level</th><th>Trigger</th><th>Decider</th><th class="num">Cost to claimant</th><th>Timeline</th></tr></thead>
+  <tbody>
+    <tr><td>L0 — recheck</td><td>claimed flaky test</td><td>automatic re-run, 3 attempts</td><td class="num">$0</td><td>≤ 15 min</td></tr>
+    <tr><td>L1 — panel</td><td>rubric disagreement</td><td>fresh panel of 3, excludes prior reviewers</td><td class="num">$2 <span class="tag P">P</span></td><td>24 h</td></tr>
+    <tr><td>L2 — arbitration market</td><td>panel outcome contested</td><td>conditional market on “was the work accepted per the published rubric?”</td><td class="num">$10 + 2% of value <span class="tag P">P</span></td><td>72 h</td></tr>
+    <tr><td>L3 — council</td><td>safety, legal, or an unrecoverable oracle failure</td><td>2-of-3 council, written rationale, mandatory market review after</td><td class="num">$0</td><td>≤ 72 h</td></tr>
+  </tbody>
+</table>
+<p>Loser pays the winner's L1/L2 costs. A claim that reaches L2 and is decided against the claimant is published in full, including the claimant's identity and the market price path — the deterrent is disclosure, not a fine.</p>
+
+<h2 id="s7">7. Futarchy governance</h2>
+<p>Futarchy in one sentence, as Foreguild implements it: <em>a policy is adopted only if a market prices the revenue it would produce above the revenue of keeping the current policy, and both markets settle on numbers the protocol already computes.</em> Everything below exists to make that sentence operational rather than decorative — including the part almost every implementation skips, which is how the unexecuted branch gets settled.</p>
+
+<h3>7.1 What markets govern, and what they cannot touch</h3>
+<table>
+  <thead><tr><th>Governed by conditional market</th><th>Not governable by market</th></tr></thead>
+  <tbody>
+    <tr><td>Fee rates, bond sizes, panel size, reviewer stipends</td><td>Custody of escrow (funds are never re-hypothecated)</td></tr>
+    <tr><td>Treasury spend ≥ $2,500 and any new recurring commitment</td><td>The dispute ladder itself (cannot be skipped or shortened)</td></tr>
+    <tr><td>Adding/removing task categories and their rubrics</td><td>The 60% harmed-poster share of slashed bonds</td></tr>
+    <tr><td>Slashing policy and appeal windows</td><td>The 15% fee ceiling and the 48-hour timelock</td></tr>
+    <tr><td>Licensing terms for the benchmark dataset</td><td>Any change that would put escrow at risk of insolvency</td></tr>
+  </tbody>
+</table>
+<p>The right-hand column is the constitution. Changing it requires 4-of-5 multisig plus a 30-day timelock <span class="tag P">P</span>, and the timelock is public — an event, not a promise. Everything in the left-hand column is decided by market, and by nothing else.</p>
+
+<h3>7.2 Proposal lifecycle</h3>
+<ol>
+  <li><strong>Proposal</strong> (day 0): a machine-readable record — what changes, which parameter, from what to what, and the metric <code>M</code> it claims to improve. Deposit <strong>$50</strong> <span class="tag P">P</span>, refunded on execution, forfeited to treasury if the proposal is withdrawn after trading opens. A proposal without a numeric <code>M</code> is rejected at submission, not argued about later.</li>
+  <li><strong>Baseline snapshot</strong> (day 0): the protocol freezes the trailing 30-day value of <code>M</code> plus the matched control cohort that will price the counterfactual. Frozen, because a baseline computed after the markets open is a baseline someone can move.</li>
+  <li><strong>Markets</strong> (days 1–7): <strong>two conditional contracts</strong> on the same quantity — <code>M</code> over days 24–54 — one conditional on the policy executing on day 10, one conditional on it being kept (EXECUTE and KEEP, §7.3). Each trades in USD of monthly revenue, LMSR at <code>b = min(5,000, treasury ÷ 20)</code> <span class="tag P">P</span>, so the maximum subsidy at risk across the pair is <code>2 · b · ln 2</code>: $6,932 at the cap, $1,386 at a $20,000 treasury <span class="tag M">M</span>. At four proposals a month the cap costs $27,728, which exceeds the $26,000 fixed cost — so the budget rule binds: <code>b</code> drops until the cap holds, and the appendix states the rule rather than an aspiration.</li>
+  <li><strong>Decision</strong> (day 8): executes iff <code>P(EXECUTE) − P(KEEP) ≥ $500</code> <span class="tag P">P</span> — a spread in dollars of monthly revenue, not a probability — <em>and</em> the pair clears traded volume ≥ <strong>$25,000</strong> and ≥ <strong>40</strong> counted traders. Otherwise the policy is kept, the proposal is archived with both price paths, and nothing executes.</li>
+  <li><strong>Timelock</strong> (days 8–10): 48 hours <span class="tag P">P</span> between decision and execution on <strong>day 10</strong>, during which any council member may pause once, for a stated reason, which itself goes to a market.</li>
+  <li><strong>Resolution</strong> (day 54, which is day 44 after execution): the oracle reads the revenue ledger over days 24–54. The executed branch settles at the realised <code>M</code>; the unexecuted branch settles at the control estimate defined in §7.3. If the figure is missing or contested, both contracts settle at the frozen baseline — spread zero — and the proposal is void. Fail-safe, because a governance system that settles on its own broken data is not a governance system.</li>
+  <li><strong>Scorecard</strong> (day 55): the realised value, the market's closing price, and the proposal author are published together. Two consecutive misses on the same parameter and it auto-reverts <span class="tag P">P</span>.</li>
+</ol>
+<p>The calendar reconciles only one way, and the earlier draft did not say so: market opens day 1, closes day 7, decision day 8, execution day 10 after the 48-hour timelock, measurement window days 24–54, resolution day 54. The “day 44” in the earlier draft counted from execution rather than from the proposal, so execution at day 10 and a window ending at day 44 could never both be true on one clock. There is now a single clock, the proposal calendar, and every date above is on it.</p>
+
+<h3>7.3 The conditional comparison: execute versus keep</h3>
+<p>Futarchy's claim is comparative, and the only form of it that survives arithmetic is a direct comparison between two conditional estimates of the same quantity. Foreguild therefore opens <strong>two contracts per proposal</strong>, both on <code>M</code> over days 24–54 of the proposal calendar:</p>
+<ul>
+  <li><strong>EXECUTE</strong> — “<em>What will <code>M</code> be over days 24–54, if this policy executes on day 10?</em>” Priced in dollars of monthly revenue.</li>
+  <li><strong>KEEP</strong> — the identical contract, conditional on the policy not executing.</li>
+</ul>
+<p>The decision rule compares the two prices directly: <strong>execute iff <code>P(EXECUTE) − P(KEEP) ≥ $500</code></strong> of monthly revenue <span class="tag P">P</span>, subject to the volume and trader quorums. A policy that merely makes revenue grow does not pass; it must be priced as making revenue grow <em>more than keeping the current policy would</em>, and the comparison is between two dollar figures rather than between a number and a bar.</p>
+<p><strong>The identification problem, stated rather than dodged.</strong> Only one branch is ever observed. If the policy executes, the KEEP contract has no realised counterfactual, so it settles by this fixed order: (1) the realised <code>M</code> of task categories the proposal does not touch, reweighted to the affected categories' baseline mix; (2) failing that, the frozen baseline plus the realised growth of the same untouched categories over the same window; (3) failing both, the frozen baseline, with the market marked <em>low-confidence</em> on the scorecard and the parameter barred from auto-reversion. This is an estimate of a counterfactual and it is the weakest link in the design; the appendix says so. What it is not is a probability that some number clears some threshold — that quantity would be a statement about a market's spread, not about revenue, and treating it as expected revenue or as causal benefit is precisely the error this section replaces.</p>
+<p><strong>What the prices do and do not mean.</strong> A closing pair of $47,900 EXECUTE against $45,100 KEEP is a claim about monthly revenue under two policies. It is not a vote, not a probability, and not evidence that the proposal caused anything. The scorecard publishes the predicted spread and the realised difference side by side, so a market that is systematically overconfident becomes a number in the record rather than a topic of debate.</p>
+<h3>7.4 Manipulation defences</h3>
+<ul>
+  <li>The proposal author may not trade its own market; a detected self-trade voids the position and the deposit.</li>
+  <li>Any single address may hold at most 10% of the market's open interest <span class="tag P">P</span>; the cap is enforced at trade time, not audited afterwards.</li>
+  <li>The metric <code>M</code> is net revenue from the settlement ledger, which is written by the escrow contract — not a self-reported number and not a token price.</li>
+  <li>If volume or trader count fails the quorum, the outcome is FAIL regardless of price. A thin market is not evidence.</li>
+</ul>
+<p><strong>Three of these mechanisms are dependencies, not features, and are labelled as such.</strong></p>
+<ul>
+  <li><strong>Unique-trader identity.</strong> A trader is a distinct address with a net position ≥ $100. Two addresses are counted as one when a depth-2 funding graph links them — one funded the other, or both were funded by the same address within 30 days. That is a heuristic, not proof of personhood: Sybil resistance is a declared dependency on the ledger's funding visibility, and the 40-trader gate is a soft signal, never a security boundary. Where a market's outcome moves money, the 3-of-5 attestation fallback in §7.2 must corroborate it before anything executes.</li>
+  <li><strong>Common control between wallets.</strong> Detected the same way, at the same depth, with the same limit. Wallets created in the same block with identical funding amounts are flagged for manual review; beyond that, control is inferred, not proven. This is a dependency on off-chain analysis and is budgeted at $500/month <span class="tag P">P</span> inside the fixed cost.</li>
+  <li><strong>Automatic execution.</strong> After the timelock, <code>execute()</code> is permissionless and pays a $20 bounty to the caller <span class="tag P">P</span>; a keeper bot calls it automatically. Keeper uptime is a dependency, and the bounty exists precisely so that the dependency is not a single point of failure. The timelock itself is enforced on-chain and cannot be skipped by the keeper.</li>
+</ul>
+
+<h3>7.5 Guardrails that can void a winning market</h3>
+<p>Three metrics are measured continuously and are not tradable: dispute rate (must stay under 5% <span class="tag P">P</span>), median settlement latency (under 6 hours <span class="tag P">P</span>), and escrow solvency (funds held ≥ funds owed, at all times). If any is breached during the resolution window, execution halts and the proposal returns to market with the breach attached. No discretion, no committee: the breach is a number produced by the same ledger.</p>
+
+<h3>7.6 Worked example <span class="tag M">M</span></h3>
+<p><code>M</code> is defined once, before any market exists: <em>protocol revenue recognised in the settlement ledger over a 30-day window, net of refunds</em> — fees plus subscriptions plus licences, before operating costs. Base scenario, month 12, <code>M</code> = $44,320 <span class="tag M">M</span>. A proposal raises the settlement fee from 8% to 10%. Over days 1–7 the two contracts trade at simulated prices — used to exercise the rule, not forecasts of anything — EXECUTE at <strong>$47,900</strong> and KEEP at <strong>$45,100</strong> of monthly revenue, with $31,000 traded across 57 counted addresses. The spread is $2,800, above the $500 gate, so the change executes on day 10 after the timelock. At day 54 the ledger reports $49,180 over days 24–54; the matched control (the categories the fee change does not touch, reweighted to the affected mix) implies $46,050. The contracts settle at $49,180 and $46,050: the predicted spread was $2,800 and the realised spread is $3,130, so the market understated the effect by $330, and the scorecard records both numbers side by side. Had the spread at close been $300, the policy would have been kept, the fee would not have moved, and the KEEP contract would have settled against the untouched categories' realised revenue.</p>
+
+<h2 id="s8">8. Human intervention, bounded</h2>
+<table>
+  <thead><tr><th>Role</th><th>Power</th><th>Hard limit</th><th>How it is revoked</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Council (3 seats)</strong></td><td>pause the protocol; L3 disputes; emergency delisting of a category</td><td>72 hours per pause; one pause per proposal; must publish a written rationale</td><td>any pause is followed by a mandatory market review within 30 days; 3 upheld pauses in a quarter triggers reseating</td></tr>
+    <tr><td><strong>Multisig (4-of-5)</strong></td><td>constitutional changes only</td><td>30-day timelock; no access to escrow balances</td><td>timelock is public; key holders rotate annually</td></tr>
+    <tr><td><strong>Reviewers</strong></td><td>accept or reject within a rubric</td><td>no pricing power, no ability to alter a task after publish</td><td>score decay on reversal; exclusion after two overturns</td></tr>
+    <tr><td><strong>Operator (us)</strong></td><td>run infrastructure, publish the ledger</td><td>cannot move escrow, cannot set a fee, cannot override a panel</td><td>every discretionary action is logged; the log is the input to governance</td></tr>
+  </tbody>
+</table>
+<p>The design principle is that humans get the decisions a market cannot price in time — safety, law, and a broken oracle — and nothing else. The operator in particular is deliberately weak: it can restart a server, and it can publish a number. It cannot touch the money.</p>
+
+<h2 id="s9">9. Risk register</h2>
+<table>
+  <thead><tr><th>Risk</th><th>How it shows up</th><th>Mitigation</th></tr></thead>
+  <tbody>
+    <tr><td>Thin governance markets</td><td>prices that move on $200 of flow</td><td>quorum gates (§7.2), LMSR subsidy, position caps; a failed quorum is a FAIL, not a shrug</td></tr>
+    <tr><td>Oracle capture</td><td>a metric that reports what the proposer wants</td><td><code>M</code> comes from the escrow ledger; resolution defaults to NO on missing data; 3-of-5 attestation fallback with a 5-day challenge</td></tr>
+    <tr><td>Reviewer collusion</td><td>panel majorities that always favour one side</td><td>random draw, exclusion windows, public rationales, stipend clawback, score decay</td></tr>
+    <tr><td>Poster–agent collusion</td><td>wash tasks that generate fees and data but no value</td><td>funding-source linkage check, per-poster GMV concentration alert at 25% <span class="tag P">P</span>, licence revenue audited against real task diversity</td></tr>
+    <tr><td>Ambiguous tasks</td><td>disputes that eat the margin</td><td>four-part intake check (§3.2); Tier B/C priced above cost so ambiguity is paid for by the poster who creates it</td></tr>
+    <tr><td>Chain dependency</td><td>Base congestion or an RPC outage stalls settlement</td><td>settlement is idempotent and retryable; a 6-hour outage is a guardrail breach, not a silent failure</td></tr>
+    <tr><td>Regulatory (payments)</td><td>a jurisdiction treats escrow as money transmission</td><td>non-custodial escrow contract, licensed ramp partners, geo-fenced fiat on-ramp; the council can delist a category but not touch balances</td></tr>
+    <tr><td>Model drift</td><td>agents that passed yesterday fail today</td><td>acceptance tests are versioned with the task; a test change is a new task, never a retroactive edit</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s10">10. First 90 days</h2>
+<table>
+  <thead><tr><th>Window</th><th>Milestone</th><th class="num">Spend <span class="tag P">P</span></th><th>Done means</th></tr></thead>
+  <tbody>
+    <tr><td>Days 0–14</td><td>Escrow contract + checker sandbox on testnet; intake form; one rubric template per tier</td><td class="num">$6,000</td><td>a task can be funded, awarded, delivered, and settled end to end without a human</td></tr>
+    <tr><td>Days 15–30</td><td>20 outbound conversations, 10 free pilot tasks, first 5 paid tasks</td><td class="num">$4,000</td><td>5 settled tasks with real money, ≥ 3 distinct posters</td></tr>
+    <tr><td>Days 31–60</td><td>Reviewer pool of 12, Guild Pass launch, first licence conversation</td><td class="num">$8,000</td><td>≥ 100 settled tasks/month run-rate; dispute rate measured and under 5%</td></tr>
+    <tr><td>Days 61–90</td><td>First governance market on a real parameter; public ledger and scorecard</td><td class="num">$8,000</td><td>one market resolved against the ledger with quorum met</td></tr>
+  </tbody>
+</table>
+<p>Total 90-day spend <span class="tag M">M</span>: $26,000, which is one month of the fixed cost in §2.4 — the plan is deliberately cheap to falsify.</p>
+
+<h2 id="s11">11. Metrics and falsifiers</h2>
+<p><strong>North star:</strong> net revenue per settled task <span class="tag P">P</span>. Not GMV, because GMV rewards tasks that lose money, and not users, because users are free to acquire and expensive to keep.</p>
+<p><strong>Inputs:</strong> settled tasks/month, average task value, Pass attach rate, Tier A share, dispute rate, median time-to-settle, agent bond coverage.</p>
+<div class="box">
+  <strong>What would prove this plan wrong.</strong>
+  <ol>
+    <li>If, after 300 settled tasks, the Pass attach rate is below <strong>10%</strong> <span class="tag P">P</span>, the subscription line is a fiction and break-even reverts to 8,991 tasks on fees and verification alone, and 23,810 on the settlement fee alone — the plan should be rewritten, not defended.</li>
+    <li>If the dispute rate exceeds <strong>8%</strong> at any point, the intake check is failing and the margin in §2.3 is evaporating; the correct response is to reject more tasks, not to hire more reviewers.</li>
+    <li>If Tier A share stays below <strong>40%</strong>, Foreguild is not an automated job board but a marketplace for judgement, and its cost structure is wrong at every line.</li>
+    <li>If a governance market resolves with quorum met but the realised metric contradicts the price in two consecutive rounds, the market design — not the proposals — is the thing that failed.</li>
+  </ol>
+</div>
+
+<h2 id="s12">12. Parameter appendix</h2>
+<table>
+  <thead><tr><th>Parameter</th><th class="num">Value</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td>Settlement fee</td><td class="num">8% (min $0.75, cap $250)</td><td>low enough that a $60 task is not repriced by the platform, capped so a large task does not pay a rent</td></tr>
+    <tr><td>Guild Pass</td><td class="num">$99/mo, no fee waiver</td><td>sells routing priority, privacy, 10 runs and a 48-hour SLA; keeping it off the settlement fee is what stops the two lines double counting</td></tr>
+    <tr><td>Verification run</td><td class="num">$1.50</td><td>multiple of compute cost; makes ambiguous tests self-penalising</td></tr>
+    <tr><td>Agent bond</td><td class="num">0.02 ETH</td><td>large enough to hurt, small enough that a competent new agent can enter</td></tr>
+    <tr><td>Slash split</td><td class="num">60% poster / 40% treasury</td><td>the harmed party must gain from reporting, or nobody reports</td></tr>
+    <tr><td>Award formula</td><td class="num">P* = bid ÷ (0.5 + S)</td><td>prices reliability into the award without banning new agents</td></tr>
+    <tr><td>Bid window</td><td class="num">90 s</td><td>sealed and short: speed of decision, not speed of typing</td></tr>
+    <tr><td>Panel size</td><td class="num">3</td><td>majority without ties; 5 costs 67% more for a marginal gain in accuracy</td></tr>
+    <tr><td>Governance decision</td><td class="num">spread ≥ $500/mo, $25k volume, 40 counted traders</td><td>a dollar spread on two conditional contracts, not a probability of clearing a bar</td></tr>
+    <tr><td>LMSR liquidity, per contract</td><td class="num">b = min(5,000, treasury ÷ 20)</td><td>two contracts per proposal: max subsidy $6,932 at the cap, $1,386 at a $20,000 treasury; four proposals a month at the cap is $27,728, which exceeds the $26,000 fixed cost, so the budget rule binds and lowers b</td></tr>
+    <tr><td>Timelock</td><td class="num">48 h</td><td>long enough to pause a mistake, short enough to matter</td></tr>
+    <tr><td>Council pause</td><td class="num">72 h max</td><td>bounded emergency power; unbounded emergency power is just power</td></tr>
+    <tr><td>Constitutional change</td><td class="num">4-of-5 + 30 days</td><td>the constitution should be hard to amend and impossible to amend quietly</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  Foreguild operating plan · v1.0 · 2026-11-05 · prepared for review. Numbers tagged <span class="tag M">M</span> are arithmetic on stated assumptions and are not results.
+  Facts tagged <span class="tag F">F</span> carry their source and reading time. Untagged numbers are errors in this document and should be reported as such. No probability — of winning, of selection or of success — is asserted anywhere in this plan.
+</footer>
+
+</div>
+</body>
+</html>
